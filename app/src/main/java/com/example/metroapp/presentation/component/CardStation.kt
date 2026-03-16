@@ -1,5 +1,6 @@
 package com.example.metroapp.presentation.component
 
+import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,28 +15,35 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.metroapp.presentation.navigation.ResultRoute
+import com.example.metroapp.presentation.screens.stateUI.UIState
 import com.example.metroapp.presentation.viewmodel.MetroViewModel
 import com.example.metroapp.ui.theme.Grey40
-import com.example.metroapp.ui.theme.Grey80
-import com.example.metroapp.ui.theme.Purple40
 import com.example.metroapp.ui.theme.metroColorPri
 
 @Composable
 fun CardStation(
+    state: UIState,
     viewModel: MetroViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
-            .padding(vertical = 60.dp),
+            .padding(vertical = 50.dp),
         contentAlignment = Alignment.Center
 
     ) {
@@ -45,7 +53,7 @@ fun CardStation(
         ) {
             Column(
                 modifier = Modifier
-                    .background(Grey40)
+                    .background(color = Grey40)
                     .padding(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
@@ -57,11 +65,12 @@ fun CardStation(
                     ),
                     fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
+                val state by viewModel.uiState.collectAsState()
                 DropDownStations(
-                    value = viewModel.startStation,
-                    stations = viewModel.stations,
+                    value = state.startStation,
+                    stations = state.stations,
                     label = "Select Start Station",
-                    onStationSelected = { viewModel.startStation = it }
+                    onStationSelected = { viewModel.updateStartStation(it) }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -75,18 +84,22 @@ fun CardStation(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 DropDownStations(
-                    value = viewModel.endStation,
-                    stations = viewModel.stations,
+                    value = state.endStation,
+                    stations = state.stations,
                     label = "Select End Station",
-                    onStationSelected = { viewModel.endStation = it }
+                    onStationSelected = { viewModel.updateEndStation(it) }
                 )
                 Spacer(modifier = Modifier.height(44.dp))
 
-                // Find Best Route Button
+                viewModel.calculateRoute()
+
                 Button(
                     onClick = {
-                        viewModel.calculateRoute()
-                        navController.navigate("result")
+                        navController.navigate(
+                            ResultRoute(
+                            startStation = state.startStation,
+                            endStation = state.endStation
+                        ))
                     },
                     modifier = Modifier
                         .fillMaxWidth()

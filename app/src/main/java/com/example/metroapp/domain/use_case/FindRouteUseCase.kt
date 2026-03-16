@@ -27,7 +27,7 @@ class FindRouteUseCase(
             ?: return RouteResult.Error("No route found")
 
         val fare = calculateFareUseCase.execute(path.size)
-        val timeMinutes = calculateTimeUseCase.execute(path.size - 1) // عدد التنقلات بين المحطات
+        val timeMinutes = calculateTimeUseCase.execute(path.size - 1)
         val timeText = "${timeMinutes} mins"
 
         val lineChanges = countLineChanges(path)
