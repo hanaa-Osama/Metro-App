@@ -16,7 +16,7 @@ object MetroMapper {
             transferLines = dto.transfer_lines
                 ?.map { it.toMetroLine() }
                 ?: emptyList(),
-            platform = dto.platform   // إضافة platform إذا كان موجوداً في DTO
+            platform = dto.platform
         )
     }
 
@@ -25,7 +25,7 @@ object MetroMapper {
             "LINE_1", "FIRST LINE", "1" -> MetroLine.LINE_1
             "LINE_2", "SECOND LINE", "2" -> MetroLine.LINE_2
             "LINE_3", "THIRD LINE", "3" -> MetroLine.LINE_3
-            "YELLOW", "YELLOW LINE" -> MetroLine.YELLOW   // دعم الخط الأصفر
+            "YELLOW", "YELLOW LINE" -> MetroLine.YELLOW
             else -> throw IllegalArgumentException("Unknown line: $this")
         }
 }
